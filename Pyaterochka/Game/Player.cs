@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Pyaterochka;
 
-public class Player
+public class Player : ICreature
 {
     public Vector2 Position { get; private set; }
-    private float speed = 2f;
-    public readonly int HitBox = 16;
+    private float speed => 2f;
+    public int HitBox => 16;
 
     public Player(Vector2 startPosition)
     {

@@ -3,7 +3,7 @@ using Pyaterochka;
 
 public class GameModel
 {
-    public Player Player { get; private set; }
+    public ICreature Player { get; private set; }
     public Rectangle[] Walls { get; private set; }
 
     public GameModel()
