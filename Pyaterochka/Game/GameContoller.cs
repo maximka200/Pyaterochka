@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TopDownGame;
+namespace Pyaterochka;
 
 public class GameController
 {
