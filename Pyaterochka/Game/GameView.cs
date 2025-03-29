@@ -28,10 +28,30 @@ namespace Pyaterochka
             var player = model.Player;
             spriteBatch.Draw(mapTexture, new Rectangle(0, 0, 800, 600), Color.White);
             spriteBatch.Draw(playerTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y, player.HitBox, player.HitBox), Color.White);
+    
             foreach (var wall in model.Walls)
             {
                 spriteBatch.Draw(wallTexture, wall, Color.White);
             }
+
+            var playerInstance = player;
+            DrawBars(spriteBatch, playerInstance);
         }
+        
+        private void DrawBars(SpriteBatch spriteBatch, IPlayer playerInstance)
+        {
+            if (playerInstance != null)
+            {
+                var barWidth = 100;
+                var barHeight = 10;
+                
+                var hpBar = new Rectangle(10, 10, (int)(barWidth * (playerInstance.Health / 3f)), barHeight);
+                spriteBatch.Draw(wallTexture, hpBar, Color.Red);
+                
+                var staminaBar = new Rectangle(10, 25, (int)(barWidth * (playerInstance.Stamina / 100f)), barHeight);
+                spriteBatch.Draw(wallTexture, staminaBar, Color.Green);
+            }
+        }
+
     }
 }

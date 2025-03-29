@@ -3,8 +3,9 @@ using Pyaterochka;
 
 public class GameModel
 {
-    public ICreature Player { get; private set; }
+    public IPlayer Player { get; private set; }
     public Rectangle[] Walls { get; private set; }
+    public bool IsGameOver => (Player?.Health ?? 3) < 1;
 
     public GameModel()
     {
@@ -19,5 +20,9 @@ public class GameModel
     public void Update()
     {
         Player.Update(Walls);
+        if (IsGameOver)
+        {
+            // Здесь можно обработать завершение игры
+        }
     }
 }
