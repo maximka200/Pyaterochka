@@ -12,6 +12,7 @@
 
 
 #---------------------------------- Content ---------------------------------#
+
 #begin empty.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -24,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:empty.jpg;map.jpg
 
+#begin player.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:player.png
+
 #begin wall.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -35,16 +48,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:wall.jpg
-
-#begin player.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:player.png;player.png
 

@@ -12,7 +12,7 @@ public class Player : IPlayer
     private static int StaminaMax = StaminaTick * 30;
     private static float speedWalk => 2f;
     private static float speedRun => 6f;
-    public int HitBox => 60;
+    public int HitBox => 90;
 
     public Player(Vector2 startPosition)
     {
