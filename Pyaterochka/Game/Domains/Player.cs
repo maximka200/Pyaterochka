@@ -19,7 +19,7 @@ public class Player : IPlayer
         Position = startPosition;
     }
 
-    public void Update(Rectangle[] walls)
+    public void Update(Rectangle[] walls, Rectangle door)
     {
         var keyboardState = Keyboard.GetState();
         Vector2 newPosition = PlayerMove(keyboardState);
@@ -27,7 +27,7 @@ public class Player : IPlayer
         var collides = false;
         foreach (var wall in walls)
         {
-            if (newBounds.Intersects(wall))
+            if (newBounds.Intersects(wall) || newBounds.Intersects(door))
             {
                 collides = true;
                 break;
