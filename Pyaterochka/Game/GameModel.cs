@@ -9,21 +9,18 @@ public class GameModel
     public int TileSize => 40;
 
     public IPlayer Player { get; private set; }
-    public IBuyer[] Buyers { get; private set; }
+    public List<IBuyer> Buyers { get; private set; } = new();
     public bool IsGameOver => (Player?.Health ?? 3) < 1;
-    public Rectangle[] walls => GetWallsFromMap();
-    public Rectangle[] doors;
+    public Rectangle[] Walls => GetWallsFromMap();
 
     private bool isGameOverHandled = false;
     private double gameOverTimer = 0;
 
+    private BuyerSpawner spawner;
+
     public GameModel()
     {
         Player = new Player(new Vector2(100, 100));
-        Buyers = new Buyer[]
-        {
-            new Buyer(new Vector2(300, 200), Player, true),
-        };
 
         Map = new int[,]
         {
@@ -38,15 +35,25 @@ public class GameModel
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
             {1, 1, 1, 1, 2, 1, 1, 1, 1, 1},
         };
+        var random = new Random();
+        Buyers.Add(new Buyer(new Vector2(300, 200), Player, random.NextDouble() < 0.2));
+        
+        spawner = new BuyerSpawner(Buyers, GetDoorFromMap(), Player);
     }
 
     public void Update(GameTime gameTime)
     {
-        Player.Update(GetWallsFromMap(), GetDoorFromMap());
-        foreach (var buyer in Buyers)
+        Player.Update(Walls, GetDoorFromMap());
+
+        foreach (var buyer in Buyers.ToArray()) // ToArray чтобы безопасно удалять
         {
-            buyer.Update(GetWallsFromMap(), GetDoorFromMap());
+            buyer.Update(Walls, GetDoorFromMap());
+
+            if (buyer.IsBanned)
+                Buyers.Remove(buyer);
         }
+
+        spawner.Update();
 
         if (IsGameOver)
         {

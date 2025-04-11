@@ -13,16 +13,14 @@ public class Buyer : IBuyer
     private static Random random = new Random();
     private int moveTimer = 0;
     private const int moveInterval = 20;
-    private const float speed = 1.5f;
+    private const float speed = 5f;
 
     private bool isEscaping = false;
     private int escapeTimer;
     private bool hasLeftShop = false;
 
-    private Rectangle currentDoor;
     private Vector2 currentTarget;
     private List<Point> pathToDoor = new();
-
     private bool movingToTarget = false;
     private IPlayer player;
 
@@ -34,7 +32,7 @@ public class Buyer : IBuyer
 
         if (isThief)
         {
-            escapeTimer = random.Next(5 * 60, 15 * 60);
+            escapeTimer = random.Next(5 * 60, 15 * 60); 
         }
     }
 
@@ -42,58 +40,96 @@ public class Buyer : IBuyer
     {
         if (IsBanned || hasLeftShop) return;
 
-        currentDoor = door;
-
         if (isThief && !isEscaping)
         {
             escapeTimer--;
             if (escapeTimer <= 0)
             {
                 isEscaping = true;
-                pathToDoor = FindPathToDoor(walls, door);
-                if (pathToDoor.Count > 0)
-                {
-                    currentTarget = new Vector2(pathToDoor[0].X * HitBox, pathToDoor[0].Y * HitBox);
-                    movingToTarget = true;
-                    pathToDoor.RemoveAt(0);
-                }
+                StartEscape(walls, door);
             }
         }
 
         if (isEscaping && movingToTarget)
         {
-            Vector2 toTarget = currentTarget - Position;
-            if (toTarget.Length() < speed)
+            MoveToTarget();
+        }
+        else
+        {
+            moveTimer++;
+            if (moveTimer >= moveInterval)
             {
-                Position = currentTarget;
+                Vector2 direction = GetValidDirection(walls);
+                Position += direction * speed;
+                moveTimer = 0;
+            }
+        }
+    }
 
-                if (pathToDoor.Count > 0)
-                {
-                    currentTarget = new Vector2(pathToDoor[0].X * HitBox, pathToDoor[0].Y * HitBox);
-                    pathToDoor.RemoveAt(0);
-                }
-                else
-                {
-                    LeaveFromShop();
-                }
+    private Vector2 GetValidDirection(Rectangle[] walls)
+    {
+        Vector2 direction;
+        Rectangle futureHitbox;
+        var attempts = 0;
+        
+        do
+        {
+            direction = GetRandomDirection();
+            futureHitbox = new Rectangle(
+                (int)(Position.X + direction.X * speed),
+                (int)(Position.Y + direction.Y * speed),
+                HitBox,
+                HitBox
+            );
+            attempts++;
+        } 
+        while (attempts < 10 && CheckWallCollision(futureHitbox, walls));
+
+        return direction;
+    }
+
+    private bool CheckWallCollision(Rectangle futureHitbox, Rectangle[] walls)
+    {
+        foreach (var wall in walls)
+        {
+            if (futureHitbox.Intersects(wall))
+                return true;
+        }
+        return false;
+    }
+
+    private void StartEscape(Rectangle[] walls, Rectangle door)
+    {
+        pathToDoor = FindPathToDoor(walls, door);
+        if (pathToDoor.Count > 0)
+        {
+            currentTarget = new Vector2(pathToDoor[0].X * HitBox, pathToDoor[0].Y * HitBox);
+            pathToDoor.RemoveAt(0);
+            movingToTarget = true;
+        }
+    }
+
+    private void MoveToTarget()
+    {
+        var toTarget = currentTarget - Position;
+        if (toTarget.Length() < speed)
+        {
+            Position = currentTarget;
+
+            if (pathToDoor.Count > 0)
+            {
+                currentTarget = new Vector2(pathToDoor[0].X * HitBox, pathToDoor[0].Y * HitBox);
+                pathToDoor.RemoveAt(0);
             }
             else
             {
-                Vector2 direction = Vector2.Normalize(toTarget);
-                Position += direction * speed;
+                LeaveFromShop(); 
             }
-
-            return;
         }
-
-        // обычное поведение
-        moveTimer++;
-        if (moveTimer >= moveInterval)
+        else
         {
-            Vector2 direction = GetRandomDirection();
-            var newPos = Position + direction * 10;
-            Position = newPos;
-            moveTimer = 0;
+            Vector2 direction = Vector2.Normalize(toTarget);
+            Position += direction * speed;
         }
     }
 
@@ -110,8 +146,7 @@ public class Buyer : IBuyer
             player.TakeDamage(1);
         }
     }
-
-    public bool HasLeft => hasLeftShop;
+    
 
     private Vector2 GetRandomDirection()
     {
@@ -128,29 +163,37 @@ public class Buyer : IBuyer
 
     private List<Point> FindPathToDoor(Rectangle[] walls, Rectangle door)
     {
-        int width = 20;  // ширина карты в клетках
-        int height = 15; // высота карты
-        bool[,] map = new bool[width, height];
+        var width = 20;  
+        var height = 15; 
+        var cost = new int[width, height];
+        var map = new bool[width, height];
 
-        for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-            map[x, y] = true;
-
-        foreach (var wall in walls)
+        for (var y = 0; y < height; y++)
         {
-            int wx = wall.X / HitBox;
-            int wy = wall.Y / HitBox;
-            for (int dx = 0; dx < wall.Width / HitBox; dx++)
-            for (int dy = 0; dy < wall.Height / HitBox; dy++)
+            for (var x = 0; x < width; x++)
             {
-                if (wx + dx < width && wy + dy < height)
-                    map[wx + dx, wy + dy] = false;
+                map[x, y] = true;
+                cost[x, y] = int.MaxValue;
             }
         }
-
-        Point start = new Point((int)Position.X / HitBox, (int)Position.Y / HitBox);
-        Point end = new Point(door.Center.X / HitBox, door.Center.Y / HitBox);
-
-        return AStar.FindPath(map, start, end);
+        
+        foreach (var wall in walls)
+        {
+            var wx = wall.X / HitBox;
+            var wy = wall.Y / HitBox;
+            for (var dx = 0; dx < wall.Width / HitBox; dx++)
+            {
+                for (var dy = 0; dy < wall.Height / HitBox; dy++)
+                {
+                    if (wx + dx < width && wy + dy < height)
+                        map[wx + dx, wy + dy] = false; // непроходимо
+                }
+            }
+        }
+        
+        var start = new Point((int)Position.X / HitBox, (int)Position.Y / HitBox);
+        var end = new Point(door.Center.X / HitBox, door.Center.Y / HitBox);
+        
+        return Dijkstra.FindPath(map, cost, start, end);
     }
 }
