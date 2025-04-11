@@ -8,10 +8,11 @@ namespace Pyaterochka
     {
         private GameModel model;
         private Texture2D playerTexture;
-        private Texture2D mapTexture;
+        private Texture2D floorTexture;
         private Texture2D wallTexture;
         private Texture2D doorTexture;
         private Texture2D buyerTexture;
+        private Texture2D gameOverTexture;
 
         public GameView(GameModel model)
         {
@@ -21,32 +22,55 @@ namespace Pyaterochka
         public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
             playerTexture = content.Load<Texture2D>("player");
-            mapTexture = content.Load<Texture2D>("map");
+            floorTexture = content.Load<Texture2D>("map");
             wallTexture = content.Load<Texture2D>("wall");
             doorTexture = content.Load<Texture2D>("door");
             buyerTexture = content.Load<Texture2D>("buyer");
+            gameOverTexture = content.Load<Texture2D>("over");
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            var player = model.Player;
-            spriteBatch.Draw(mapTexture, new Rectangle(0, 0, 800, 600), Color.White);
-            spriteBatch.Draw(doorTexture, new Rectangle(model.Door.X, model.Door.Y, 30, 70), Color.White);
-            spriteBatch.Draw(playerTexture, new Rectangle((int)player.Position.X, (int)player.Position.Y, player.HitBox, player.HitBox), Color.White);
+            var tileSize = model.TileSize;
+            var map = model.Map;
+
+            for (int y = 0; y < map.GetLength(0); y++)
+            {
+                for (int x = 0; x < map.GetLength(1); x++)
+                {
+                    var pos = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                    switch (map[y, x])
+                    {
+                        case 0:
+                            spriteBatch.Draw(floorTexture, pos, Color.White);
+                            break;
+                        case 1:
+                            spriteBatch.Draw(wallTexture, pos, Color.White);
+                            break;
+                        case 2:
+                            spriteBatch.Draw(doorTexture, pos, Color.White);
+                            break;
+                    }
+                }
+            }
+
+            // Отрисовка игроков и покупателей
+            spriteBatch.Draw(playerTexture, new Rectangle((int)model.Player.Position.X, (int)model.Player.Position.Y, model.Player.HitBox, model.Player.HitBox), Color.White);
             foreach (var buyer in model.Buyers)
             {
                 if (!buyer.IsBanned)
-                    spriteBatch.Draw(buyerTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White); ;
+                    spriteBatch.Draw(buyerTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
             }
 
-            foreach (var wall in model.Walls)
+            DrawBars(spriteBatch, model.Player);
+
+            if (model.IsGameOver)
             {
-                spriteBatch.Draw(wallTexture, wall, Color.White);
+                spriteBatch.Draw(wallTexture, new Rectangle(0, 0, 800, 600), Color.Black);
+                spriteBatch.Draw(gameOverTexture, new Vector2(400 - gameOverTexture.Width / 2, 300 - gameOverTexture.Height / 2), Color.White);
             }
-
-            var playerInstance = player;
-            DrawBars(spriteBatch, playerInstance);
         }
+
         
         private void DrawBars(SpriteBatch spriteBatch, IPlayer playerInstance)
         {

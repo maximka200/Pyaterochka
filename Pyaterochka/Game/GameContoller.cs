@@ -24,7 +24,7 @@ public class GameController
 
     public void Update(GameTime gameTime)
     {
-        model.Update();
+        model.Update(gameTime);
 
         var currentKeyboardState = Keyboard.GetState();
 
@@ -45,7 +45,7 @@ public class GameController
                         {
                             model.Player.TakeDamage(1);
                         }
-                        break; // Обвиняем только одного
+                        break; 
                     }
                 }
             }
