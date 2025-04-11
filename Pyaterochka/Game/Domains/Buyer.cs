@@ -14,6 +14,7 @@ public class Buyer : IBuyer
     private int moveTimer = 0;
     private const int moveInterval = 20;
     private const float speed = 5f;
+    private int step = 2;
 
     private bool isEscaping = false;
     private int escapeTimer;
@@ -152,10 +153,10 @@ public class Buyer : IBuyer
     {
         Vector2[] directions =
         {
-            new Vector2(1, 0),
-            new Vector2(-1, 0),
-            new Vector2(0, 1),
-            new Vector2(0, -1),
+            new Vector2(1, 0) * step,
+            new Vector2(-1, 0) * step,
+            new Vector2(0, 1) * step,
+            new Vector2(0, -1) * step,
         };
 
         return directions[random.Next(directions.Length)];

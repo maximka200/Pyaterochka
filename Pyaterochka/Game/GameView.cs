@@ -53,8 +53,7 @@ namespace Pyaterochka
                     }
                 }
             }
-
-            // Отрисовка игроков и покупателей
+            
             spriteBatch.Draw(playerTexture, new Rectangle((int)model.Player.Position.X, (int)model.Player.Position.Y, model.Player.HitBox, model.Player.HitBox), Color.White);
             foreach (var buyer in model.Buyers)
             {

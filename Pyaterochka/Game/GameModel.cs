@@ -21,20 +21,20 @@ public class GameModel
 
     public GameModel()
     {
-        Player = new Player(new Vector2(100, 100));
-        Map = new GameMap(); // Инициализация карты
+        Player = new Player(new Vector2(60, 100));
+        Map = new GameMap(); 
         
         var random = new Random();
         Buyers.Add(new Buyer(new Vector2(300, 200), Player, random.NextDouble() < 0.2));
         
-        spawner = new BuyerSpawner(Buyers, Map.Door, Player); // Передаем дверь из карты
+        spawner = new BuyerSpawner(Buyers, Map.Door, Player);
     }
 
     public void Update(GameTime gameTime)
     {
-        Player.Update(Walls, Door); // Передаем стену и дверь из карты
+        Player.Update(Walls, Door); 
 
-        foreach (var buyer in Buyers.ToArray()) // ToArray чтобы безопасно удалять
+        foreach (var buyer in Buyers.ToArray()) 
         {
             buyer.Update(Walls, Door);
 
