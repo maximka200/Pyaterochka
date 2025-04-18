@@ -15,8 +15,6 @@ namespace Pyaterochka
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            graphics.IsFullScreen = true;
-
         }
 
         protected override void Initialize()

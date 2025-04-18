@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Pyaterochka.Buyers;
 
 namespace Pyaterochka
 {
@@ -13,6 +14,8 @@ namespace Pyaterochka
         private Texture2D doorTexture;
         private Texture2D buyerTexture;
         private Texture2D gameOverTexture;
+        private Texture2D boozerTexture;
+        private Texture2D babushkaTexture;
 
         public GameView(GameModel model)
         {
@@ -27,6 +30,8 @@ namespace Pyaterochka
             doorTexture = content.Load<Texture2D>("door");
             buyerTexture = content.Load<Texture2D>("buyer");
             gameOverTexture = content.Load<Texture2D>("over");
+            babushkaTexture= content.Load<Texture2D>("babushka");
+            boozerTexture = content.Load<Texture2D>("boozer");
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -58,7 +63,16 @@ namespace Pyaterochka
             foreach (var buyer in model.Buyers)
             {
                 if (!buyer.IsBanned)
-                    spriteBatch.Draw(buyerTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
+                    switch (buyer)
+                    {
+                        case Boozer:
+                            spriteBatch.Draw(boozerTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
+                            break;
+                        case Babushka:
+                            spriteBatch.Draw(babushkaTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
+                            break;
+                    }
+                    
             }
 
             DrawBars(spriteBatch, model.Player);

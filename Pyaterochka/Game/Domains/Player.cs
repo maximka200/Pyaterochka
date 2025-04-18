@@ -12,22 +12,22 @@ public class Player : IPlayer
     private static int StaminaMax = StaminaTick * 30;
     private static float speedWalk => 2f;
     private static float speedRun => 6f;
-    public int HitBox => 60;
+    public int HitBox => 40;
 
     public Player(Vector2 startPosition)
     {
         Position = startPosition;
     }
 
-    public void Update(Rectangle[] walls, Rectangle door)
+    public void Update(GameMap gameMap)
     {
         var keyboardState = Keyboard.GetState();
         Vector2 newPosition = PlayerMove(keyboardState);
         var newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y, HitBox, HitBox);
         var collides = false;
-        foreach (var wall in walls)
+        foreach (var wall in gameMap.Walls)
         {
-            if (newBounds.Intersects(wall) || newBounds.Intersects(door))
+            if (newBounds.Intersects(wall) || newBounds.Intersects(gameMap.Door))
             {
                 collides = true;
                 break;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Pyaterochka;
+using Pyaterochka.Buyers;
 
 public class GameModel
 {
@@ -25,18 +26,18 @@ public class GameModel
         Map = new GameMap(); 
         
         var random = new Random();
-        Buyers.Add(new Buyer(new Vector2(300, 200), Player, random.NextDouble() < 0.2));
+        Buyers.Add(new Boozer(new Vector2(300, 200), Player));
         
         spawner = new BuyerSpawner(Buyers, Map.Door, Player);
     }
 
     public void Update(GameTime gameTime)
     {
-        Player.Update(Walls, Door); 
+        Player.Update(Map); 
 
         foreach (var buyer in Buyers.ToArray()) 
         {
-            buyer.Update(Walls, Door);
+            buyer.Update(Map);
 
             if (buyer.IsBanned)
                 Buyers.Remove(buyer);

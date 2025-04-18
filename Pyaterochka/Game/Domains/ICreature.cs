@@ -6,5 +6,5 @@ public interface ICreature
 {
     Vector2 Position { get; }
     int HitBox { get; }
-    void Update(Rectangle[] walls, Rectangle door);
+    void Update(GameMap gameMap);
 }

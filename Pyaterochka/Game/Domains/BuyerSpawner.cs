@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Pyaterochka.Buyers;
 
 namespace Pyaterochka;
 
@@ -32,8 +33,18 @@ public class BuyerSpawner
 
     private void SpawnBuyer()
     {
-        Vector2 spawnPos = new Vector2(door.X , door.Y - 60);
-        var isThief = random.NextDouble() < 0.2;
-        buyers.Add(new Buyer(spawnPos, player, isThief));
+        var spawnPos = new Vector2(door.X + 40, door.Y);
+        IBuyer buyer;
+    
+        if (random.Next(2) == 0)
+        {
+            buyer = new Boozer(spawnPos, player);
+        }
+        else
+        {
+            buyer = new Babushka(spawnPos, player);
+        }
+    
+        buyers.Add(buyer);
     }
 }
