@@ -12,14 +12,14 @@ public class Buyer : IBuyer
     protected IPlayer player;
     protected static Random random = new Random();
     protected int escapeTimer;
-    private float GetSpeed() => isEscaping && isThief ? 8f : 4f;
+    private float GetSpeed() => isEscaping && isThief ? 16f : 8f;
 
     private List<Point> customPath = new();
     private bool useCustomPath = false;
 
     private bool isThief { get; set; }
     private int moveTimer = 0;
-    private const int moveInterval = 5;
+    private const int moveInterval = 10;
     private int step = 2;
 
     private bool isEscaping = false;
@@ -33,11 +33,14 @@ public class Buyer : IBuyer
     private int leaveTimer;
     private const int minLeaveTime = 20 * 60;
     private const int maxLeaveTime = 30 * 60;
+    private int escapeMoveTimer = 0;
+    private const int escapeMoveInterval = 10; 
 
     public Buyer(Vector2 startPosition, IPlayer player, bool isThief = false)
     {
         this.player = player;
         Position = startPosition;
+        SnapToGrid(); // Выравниваем позицию на сетке
         this.isThief = isThief;
 
         if (isThief)
@@ -50,41 +53,16 @@ public class Buyer : IBuyer
     {
         if (IsBanned || hasLeftShop) return;
 
-       /* if (useCustomPath && customPath.Count > 0)
-        {
-            MoveTowards(currentTarget, map);
-            if (Vector2.Distance(Position, currentTarget) < GetSpeed())
-            {
-                Position = currentTarget;
-                if (customPath.Count > 0)
-                {
-                    currentTarget = PathPointToVector(customPath[0]);
-                    customPath.RemoveAt(0);
-                }
-                else
-                {
-                    useCustomPath = false;
-                }
-            }
-            return;
-        }
-
-        if (!useCustomPath)
-            TryStartCustomPath(map);
-        */
         if (isEscaping && movingToTarget)
         {
-            MoveTowards(currentTarget, map);
-
-            if (Vector2.Distance(Position, new Vector2(map.Door.X, map.Door.Y)) <= HitBox * 1.2)
-            {
-                LeaveFromShop();
+            escapeMoveTimer++; 
+            if (escapeMoveTimer < escapeMoveInterval)
                 return;
-            }
 
-            if (Vector2.Distance(Position, currentTarget) < GetSpeed())
+            escapeMoveTimer = 0; 
+            
+            if (IsAtCenterOfCell())
             {
-                Position = currentTarget;
                 if (pathToDoor.Count > 0)
                 {
                     currentTarget = PathPointToVector(pathToDoor[0]);
@@ -93,11 +71,18 @@ public class Buyer : IBuyer
                 else
                 {
                     LeaveFromShop();
+                    return;
                 }
+            }
+            MoveToTarget(currentTarget);
+            
+            if (Vector2.Distance(Position, new Vector2(map.Door.X, map.Door.Y)) <= HitBox * 1.2)
+            {
+                LeaveFromShop();
             }
             return;
         }
-       
+
         if (isThief && !isEscaping)
         {
             escapeTimer--;
@@ -119,11 +104,33 @@ public class Buyer : IBuyer
 
         moveTimer++;
         if (moveTimer >= moveInterval)
-        {
-            Vector2 direction = GetValidDirection(map);
+        { 
+            var direction = GetValidDirection(map);
+            if (direction == Vector2.Zero)
+            {
+                var nearestPoint = FindNearestEmptyPoint(map);
+                MoveToTarget(new Vector2(nearestPoint.X * HitBox + HitBox / 2, nearestPoint.Y * HitBox + HitBox / 2));
+            }
             moveTimer = 0;
         }
     }
+    
+    private bool IsAtCenterOfCell()
+    {
+        int gridX = (int)(Position.X / HitBox);
+        int gridY = (int)(Position.Y / HitBox);
+
+        float centerX = gridX * HitBox + HitBox / 2;
+        float centerY = gridY * HitBox + HitBox / 2;
+
+        return Math.Abs(Position.X - centerX) < 0.1f && Math.Abs(Position.Y - centerY) < 0.1f;
+    }
+    
+    private void MoveToTarget(Vector2 target)
+    {
+        Position = target; 
+    }
+    
 
     public void Ban() => IsBanned = true;
 
@@ -137,43 +144,11 @@ public class Buyer : IBuyer
             player.TakeDamage(1);
     }
 
-    private void TryStartCustomPath(GameMap map)
-    {
-        customPath = FindRandomPath(map);
-        if (customPath.Count > 0)
-        {
-            useCustomPath = true;
-            currentTarget = PathPointToVector(customPath[0]);
-            customPath.RemoveAt(0);
-        }
-    }
-
     private Vector2 PathPointToVector(Point point)
     {
         return new Vector2(point.X * HitBox + HitBox / 2, point.Y * HitBox + HitBox / 2);
     }
-
-    private List<Point> FindRandomPath(GameMap map)
-    {
-        var width = map.Map.GetLength(1);
-        var height = map.Map.GetLength(0);
-        var start = new Point((int)Position.X / HitBox, (int)Position.Y / HitBox);
-
-        if (!IsValidPoint(map.Map, start)) return new();
-
-        Point end;
-        int attempts = 0;
-        do
-        {
-            end = new Point(random.Next(width), random.Next(height));
-            attempts++;
-        } while ((!IsValidPoint(map.Map, end) || end == start) && attempts < 100);
-
-        if (attempts >= 100) return new();
-
-        return BFS.FindPath(map, start, end);
-    }
-
+    
     private List<Point> FindPathToDoor(GameMap map)
     {
         var start = new Point(
@@ -182,24 +157,6 @@ public class Buyer : IBuyer
         );
         var end = new Point(map.Door.X / HitBox, map.Door.Y / HitBox);
         var path =  BFS.FindPath(map, start, end);
-        BFS.PrintMapWithPath(new int[,]
-        {
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1},
-            {2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-        }, path, start, end);
         return path;
     }
 
@@ -214,6 +171,11 @@ public class Buyer : IBuyer
 
     private void StartEscape(GameMap map)
     {
+        var nearestEmptyPoint = FindNearestEmptyPoint(map);
+        var targetPosition = PathPointToVector(nearestEmptyPoint);
+        
+        MoveToTarget(targetPosition);
+        
         pathToDoor = FindPathToDoor(map);
         if (pathToDoor.Count == 0)
         {
@@ -221,6 +183,7 @@ public class Buyer : IBuyer
             escapeTimer = 60;
             return;
         }
+
         currentTarget = PathPointToVector(pathToDoor[0]);
         pathToDoor.RemoveAt(0);
         movingToTarget = true;
@@ -258,32 +221,16 @@ public class Buyer : IBuyer
         Position = nextPosition;
         return true;
     }
-
-    private bool CanMove(Vector2 direction, GameMap map)
-    {
-        var nextPosition = Position + direction * GetSpeed();
-        var hitbox = new Rectangle((int)nextPosition.X, (int)nextPosition.Y, HitBox, HitBox);
-        return !map.Walls.Any(w => w.Intersects(hitbox));
-    }
-
-    private void MoveTowards(Vector2 target, GameMap map)
-    {
-        var toTarget = target - Position;
-        if (toTarget.Length() == 0) return;
-
-        var direction = Vector2.Normalize(toTarget);
-        TryMove(direction, map);
-    }
+    
     
     private Point FindNearestEmptyPoint(GameMap map)
     {
-        var width = map.Map.GetLength(1);
-        var height = map.Map.GetLength(0);
+        var width = GameMap.Map.GetLength(1);
+        var height = GameMap.Map.GetLength(0);
 
         int startX = (int)(Position.X / HitBox);
         int startY = (int)(Position.Y / HitBox);
-
-        // Проверяем все соседние клетки в порядке увеличения расстояния
+        
         for (int radius = 0; radius < Math.Max(width, height); radius++)
         {
             for (int dx = -radius; dx <= radius; dx++)
@@ -291,7 +238,7 @@ public class Buyer : IBuyer
                 for (int dy = -radius; dy <= radius; dy++)
                 {
                     if (Math.Abs(dx) != radius && Math.Abs(dy) != radius)
-                        continue; // Пропускаем внутренние клетки
+                        continue; 
 
                     int checkX = startX + dx;
                     int checkY = startY + dy;
@@ -299,7 +246,7 @@ public class Buyer : IBuyer
                     if (checkX >= 0 && checkX < width && checkY >= 0 && checkY < height)
                     {
                         var point = new Point(checkX, checkY);
-                        if (IsValidPoint(map.Map, point))
+                        if (IsValidPoint(GameMap.Map, point))
                         {
                             return point;
                         }
@@ -307,8 +254,15 @@ public class Buyer : IBuyer
                 }
             }
         }
-
-        // Если не найдено свободных клеток, возвращаем текущую позицию
+        
         return new Point(startX, startY);
+    }
+    
+    private void SnapToGrid()
+    {
+        int gridX = (int)(Position.X / HitBox);
+        int gridY = (int)(Position.Y / HitBox);
+
+        Position = new Vector2(gridX * HitBox + HitBox / 2, gridY * HitBox + HitBox / 2);
     }
 }

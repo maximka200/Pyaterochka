@@ -15,6 +15,13 @@ namespace Pyaterochka
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            // graphics.IsFullScreen = true;
+            int mapWidth = GameMap.Map.GetLength(1); // Количество клеток по ширине
+            int mapHeight = GameMap.Map.GetLength(0); // Количество клеток по высоте
+            int tileSize = 40; // Размер одной клетки в пикселях
+
+            graphics.PreferredBackBufferWidth = mapWidth * tileSize; // Ширина экрана
+            graphics.PreferredBackBufferHeight = mapHeight * tileSize;
         }
 
         protected override void Initialize()

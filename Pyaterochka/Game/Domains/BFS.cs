@@ -15,7 +15,7 @@ namespace Pyaterochka
         /// <returns>Список точек, представляющих путь. Если путь не найден, возвращается пустой список.</returns>
         public static List<Point> FindPath(GameMap gameMap, Point start, Point end)
         {
-            var map = gameMap.Map;
+            var map = GameMap.Map;
             var width = map.GetLength(1);
             var height = map.GetLength(0);
     

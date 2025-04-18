@@ -33,7 +33,7 @@ public class BuyerSpawner
 
     private void SpawnBuyer()
     {
-        var spawnPos = new Vector2(door.X + 40, door.Y);
+        var spawnPos = new Vector2(door.X, door.Y + 40);
         IBuyer buyer;
     
         if (random.Next(2) == 0)

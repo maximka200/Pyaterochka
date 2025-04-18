@@ -37,14 +37,13 @@ namespace Pyaterochka
         public void Draw(SpriteBatch spriteBatch)
         {
             var tileSize = model.TileSize;
-            var map = model.Map;
-
-            for (int y = 0; y < map.Map.GetLength(0); y++)
+            
+            for (int y = 0; y < GameMap.Map.GetLength(0); y++)
             {
-                for (int x = 0; x < map.Map.GetLength(1); x++)
+                for (int x = 0; x < GameMap.Map.GetLength(1); x++)
                 {
                     var pos = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-                    switch (map.Map[y, x])
+                    switch (GameMap.Map[y, x])
                     {
                         case 0:
                             spriteBatch.Draw(floorTexture, pos, Color.White);

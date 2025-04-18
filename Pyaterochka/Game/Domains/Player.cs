@@ -13,6 +13,7 @@ public class Player : IPlayer
     private static float speedWalk => 2f;
     private static float speedRun => 6f;
     public int HitBox => 40;
+    public int Score {get; set;}
 
     public Player(Vector2 startPosition)
     {

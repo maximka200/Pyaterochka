@@ -11,6 +11,7 @@ public static class AccusationSystem
 
         if (distance <= accusationRange)
         {
+            player.Score++;
             return buyer.IsThief();
         }
 

@@ -6,7 +6,7 @@ using Pyaterochka.Buyers;
 
 public class GameModel
 {
-    public GameMap Map { get; private set; } // Заменено int[,] на GameMap
+    public GameMap Map { get; private set; }
     public int TileSize => 40;
 
     public IPlayer Player { get; private set; }
@@ -26,7 +26,7 @@ public class GameModel
         Map = new GameMap(); 
         
         var random = new Random();
-        Buyers.Add(new Boozer(new Vector2(300, 200), Player));
+        Buyers.Add(new Boozer(new Vector2(320, 200), Player));
         
         spawner = new BuyerSpawner(Buyers, Map.Door, Player);
     }
