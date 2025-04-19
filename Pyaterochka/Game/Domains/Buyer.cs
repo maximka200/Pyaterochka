@@ -24,8 +24,8 @@ public class Buyer : IBuyer
 
     private bool isEscaping = false;
     private bool hasLeftShop = false;
-    private const int minEscapeTime = 0 * 60;
-    private const int maxEscapeTime = 4 * 60;
+    private const int minEscapeTime = 5 * 60;
+    private const int maxEscapeTime = 15 * 60;
     
     private Vector2 currentTarget;
     private List<Point> pathToDoor = new();
@@ -40,7 +40,7 @@ public class Buyer : IBuyer
     {
         this.player = player;
         Position = startPosition;
-        SnapToGrid(); // Выравниваем позицию на сетке
+        SnapToGrid(); 
         this.isThief = isThief;
 
         if (isThief)
@@ -109,7 +109,7 @@ public class Buyer : IBuyer
             if (direction == Vector2.Zero)
             {
                 var nearestPoint = FindNearestEmptyPoint(map);
-                MoveToTarget(new Vector2(nearestPoint.X * HitBox + HitBox / 2, nearestPoint.Y * HitBox + HitBox / 2));
+                MoveToTarget(PathPointToVector(nearestPoint));
             }
             moveTimer = 0;
         }
@@ -117,11 +117,11 @@ public class Buyer : IBuyer
     
     private bool IsAtCenterOfCell()
     {
-        int gridX = (int)(Position.X / HitBox);
-        int gridY = (int)(Position.Y / HitBox);
+        var gridX = (int)(Position.X / HitBox);
+        var gridY = (int)(Position.Y / HitBox);
 
-        float centerX = gridX * HitBox + HitBox / 2;
-        float centerY = gridY * HitBox + HitBox / 2;
+        var centerX = gridX * HitBox + HitBox / 2;
+        var centerY = gridY * HitBox + HitBox / 2;
 
         return Math.Abs(Position.X - centerX) < 0.1f && Math.Abs(Position.Y - centerY) < 0.1f;
     }
@@ -240,8 +240,8 @@ public class Buyer : IBuyer
                     if (Math.Abs(dx) != radius && Math.Abs(dy) != radius)
                         continue; 
 
-                    int checkX = startX + dx;
-                    int checkY = startY + dy;
+                    var checkX = startX + dx;
+                    var checkY = startY + dy;
 
                     if (checkX >= 0 && checkX < width && checkY >= 0 && checkY < height)
                     {

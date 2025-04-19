@@ -42,7 +42,12 @@ namespace Pyaterochka
             {
                 for (int x = 0; x < GameMap.Map.GetLength(1); x++)
                 {
-                    var pos = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                    var pos = new Rectangle(
+                        x * tileSize - tileSize / 2,  // Смещение по X
+                        y * tileSize - tileSize / 2,  // Смещение по Y
+                        tileSize, 
+                        tileSize
+                    );
                     switch (GameMap.Map[y, x])
                     {
                         case 0:
@@ -58,14 +63,27 @@ namespace Pyaterochka
                 }
             }
             
-            spriteBatch.Draw(playerTexture, new Rectangle((int)model.Player.Position.X, (int)model.Player.Position.Y, model.Player.HitBox, model.Player.HitBox), Color.White);
+            spriteBatch.Draw(
+                playerTexture,
+                new Rectangle(
+                    (int)model.Player.Position.X - model.Player.HitBox / 2,
+                    (int)model.Player.Position.Y - model.Player.HitBox / 2,
+                    model.Player.HitBox,
+                    model.Player.HitBox
+                ),
+                Color.White
+            );
             foreach (var buyer in model.Buyers)
             {
                 if (!buyer.IsBanned)
                     switch (buyer)
                     {
                         case Boozer:
-                            spriteBatch.Draw(boozerTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
+                            spriteBatch.Draw(boozerTexture, new Rectangle(
+                                (int)buyer.Position.X - buyer.HitBox / 2, 
+                                (int)buyer.Position.Y - buyer.HitBox / 2, 
+                                buyer.HitBox, buyer.HitBox), 
+                                Color.White);
                             break;
                         case Babushka:
                             spriteBatch.Draw(babushkaTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
@@ -98,6 +116,5 @@ namespace Pyaterochka
                 spriteBatch.Draw(wallTexture, staminaBar, Color.Green);
             }
         }
-
     }
 }
