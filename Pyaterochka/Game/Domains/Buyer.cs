@@ -35,6 +35,12 @@ public class Buyer : IBuyer
     private const int maxLeaveTime = 30 * 60;
     private int escapeMoveTimer = 0;
     private const int escapeMoveInterval = 15; 
+    
+    private int randomWanderTimer;
+    private const int minWanderTime = 7 * 60;
+    private const int maxWanderTime = 10 * 60;
+    private List<Point> wanderPath = new();
+    private bool isWandering = false;
 
     public Buyer(Vector2 startPosition, IPlayer player, bool isThief = false)
     {
@@ -42,7 +48,7 @@ public class Buyer : IBuyer
         Position = startPosition;
         SnapToGrid(); 
         this.isThief = isThief;
-
+        randomWanderTimer = random.Next(minWanderTime, maxWanderTime);
         if (isThief)
             escapeTimer = random.Next(minEscapeTime, maxEscapeTime);
         else
@@ -101,10 +107,33 @@ public class Buyer : IBuyer
                 StartEscape(map);
             }
         }
+        
+        randomWanderTimer--;
+        if (randomWanderTimer <= 0 && !movingToTarget)
+        {
+            StartRandomWander(map);
+        }
 
         moveTimer++;
         if (moveTimer >= moveInterval)
         { 
+            if (isWandering)
+            {
+                if (wanderPath.Count > 0)
+                {
+                    currentTarget = PathPointToVector(wanderPath[0]);
+                    wanderPath.RemoveAt(0);
+                    if (!TryMove(currentTarget, map))
+                    {
+                        ResetWander();
+                    };
+                }
+                else
+                {
+                    ResetWander();
+                }
+                return;
+            }
             var direction = GetValidDirection(map);
 
             if (direction == Vector2.Zero)
@@ -126,6 +155,13 @@ public class Buyer : IBuyer
 
         return Math.Abs(Position.X - centerX) < 0.1f && Math.Abs(Position.Y - centerY) < 0.1f;
     }
+
+    private void ResetWander()
+    {
+        isWandering = false;
+        wanderPath.Clear();
+        randomWanderTimer = random.Next(minWanderTime, maxWanderTime);
+    }
     
     private void MoveToTarget(Vector2 target)
     {
@@ -144,6 +180,29 @@ public class Buyer : IBuyer
         if (isThief)
             player.TakeDamage(1);
     }
+    
+    private void StartRandomWander(GameMap map)
+    {
+        var start = new Point((int)(Position.X / HitBox), (int)(Position.Y / HitBox));
+
+        Point target;
+        do
+        {
+            var x = random.Next(GameMap.Map.GetLength(1));
+            var y = random.Next(GameMap.Map.GetLength(0));
+            target = new Point(x, y);
+        } while (!IsValidPoint(GameMap.Map, target));
+
+        wanderPath = BFS.FindPath(map, start, target);
+        if (wanderPath.Count > 0)
+        {
+            isWandering = true;
+            currentTarget = PathPointToVector(wanderPath[0]);
+            wanderPath.RemoveAt(0);
+            MoveToTarget(currentTarget);
+        }
+    }
+
 
     private Vector2 PathPointToVector(Point point)
     {
@@ -214,15 +273,19 @@ public class Buyer : IBuyer
     private bool TryMove(Vector2 direction, GameMap map)
     {
         var nextPosition = Position + direction * GetSpeed();
-        var hitbox = new Rectangle((int)nextPosition.X, (int)nextPosition.Y, HitBox, HitBox);
+        if (nextPosition.X < 0 || nextPosition.Y < 0 || 
+            nextPosition.X >= GameMap.Map.GetLength(0) * HitBox || 
+            nextPosition.Y >= GameMap.Map.GetLength(1) * HitBox)
+            return false;
 
+        var hitbox = new Rectangle((int)nextPosition.X, (int)nextPosition.Y, HitBox, HitBox);
         if (map.Walls.Any(w => w.Intersects(hitbox)))
             return false;
 
         Position = nextPosition;
         return true;
     }
-    
+        
     
     private Point FindNearestEmptyPoint(GameMap map)
     {
