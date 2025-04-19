@@ -19,7 +19,7 @@ public class Buyer : IBuyer
 
     private bool isThief { get; set; }
     private int moveTimer = 0;
-    private const int moveInterval = 10;
+    private const int moveInterval = 15;
     private int step = 2;
 
     private bool isEscaping = false;
@@ -34,7 +34,7 @@ public class Buyer : IBuyer
     private const int minLeaveTime = 20 * 60;
     private const int maxLeaveTime = 30 * 60;
     private int escapeMoveTimer = 0;
-    private const int escapeMoveInterval = 10; 
+    private const int escapeMoveInterval = 15; 
 
     public Buyer(Vector2 startPosition, IPlayer player, bool isThief = false)
     {
@@ -106,6 +106,7 @@ public class Buyer : IBuyer
         if (moveTimer >= moveInterval)
         { 
             var direction = GetValidDirection(map);
+
             if (direction == Vector2.Zero)
             {
                 var nearestPoint = FindNearestEmptyPoint(map);
@@ -120,8 +121,8 @@ public class Buyer : IBuyer
         var gridX = (int)(Position.X / HitBox);
         var gridY = (int)(Position.Y / HitBox);
 
-        var centerX = gridX * HitBox + HitBox / 2;
-        var centerY = gridY * HitBox + HitBox / 2;
+        var centerX = gridX * HitBox;
+        var centerY = gridY * HitBox;
 
         return Math.Abs(Position.X - centerX) < 0.1f && Math.Abs(Position.Y - centerY) < 0.1f;
     }
@@ -136,7 +137,7 @@ public class Buyer : IBuyer
 
     public bool IsThief() => isThief;
 
-    public virtual void LeaveFromShop()
+    public void LeaveFromShop()
     {
         hasLeftShop = true;
         Ban();
@@ -146,7 +147,7 @@ public class Buyer : IBuyer
 
     private Vector2 PathPointToVector(Point point)
     {
-        return new Vector2(point.X * HitBox + HitBox / 2, point.Y * HitBox + HitBox / 2);
+        return new Vector2(point.X * HitBox, point.Y * HitBox);
     }
     
     private List<Point> FindPathToDoor(GameMap map)
@@ -166,7 +167,7 @@ public class Buyer : IBuyer
         var height = map.GetLength(0);
         if (point.X < 0 || point.X >= width || point.Y < 0 || point.Y >= height)
             return false;
-        return map[point.Y, point.X] == 0 || map[point.Y, point.X] == 2;
+        return map[point.Y, point.X] == 0;
     }
 
     private void StartEscape(GameMap map)
@@ -228,10 +229,10 @@ public class Buyer : IBuyer
         var width = GameMap.Map.GetLength(1);
         var height = GameMap.Map.GetLength(0);
 
-        int startX = (int)(Position.X / HitBox);
-        int startY = (int)(Position.Y / HitBox);
+        var startX = (int)(Position.X / HitBox);
+        var startY = (int)(Position.Y / HitBox);
         
-        for (int radius = 0; radius < Math.Max(width, height); radius++)
+        for (int radius = 1; radius < Math.Max(width, height); radius++)
         {
             for (int dx = -radius; dx <= radius; dx++)
             {
@@ -260,9 +261,9 @@ public class Buyer : IBuyer
     
     private void SnapToGrid()
     {
-        int gridX = (int)(Position.X / HitBox);
-        int gridY = (int)(Position.Y / HitBox);
+        var gridX = (int)(Position.X / HitBox);
+        var gridY = (int)(Position.Y / HitBox);
 
-        Position = new Vector2(gridX * HitBox + HitBox / 2, gridY * HitBox + HitBox / 2);
+        Position = new Vector2(gridX * HitBox, gridY * HitBox);
     }
 }

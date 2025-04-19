@@ -18,15 +18,15 @@ public class GameMap
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     };
-    public int TileSize => 40;
-    public Rectangle[] Walls => GetWallsFromMap();
-    public Rectangle Door => GetDoorFromMap();
+    public static int TileSize => 40;
+    public Rectangle[] Walls = GetWallsFromMap();
+    public Rectangle Door = GetDoorFromMap();
 
     public GameMap()
     {
     }
 
-    private Rectangle[] GetWallsFromMap()
+    private static Rectangle[] GetWallsFromMap()
     {
         var walls = new List<Rectangle>();
         for (var y = 0; y < Map.GetLength(0); y++)
@@ -42,7 +42,7 @@ public class GameMap
         return walls.ToArray();
     }
 
-    private Rectangle GetDoorFromMap()
+    private static Rectangle GetDoorFromMap()
     {
         for (var y = 0; y < Map.GetLength(0); y++)
         {

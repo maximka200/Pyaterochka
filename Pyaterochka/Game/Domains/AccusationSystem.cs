@@ -4,17 +4,32 @@ namespace Pyaterochka;
 
 public static class AccusationSystem
 {
-    public static bool Accuse(IPlayer player, IBuyer buyer)
+    public static AccusationResult Accuse(IPlayer player, IBuyer buyer)
     {
         var distance = Vector2.Distance(player.Position, buyer.Position);
         var accusationRange = 100f;
 
         if (distance <= accusationRange)
         {
-            player.Score++;
-            return buyer.IsThief();
+            if (buyer.IsThief())
+            {
+                player.Score++;
+                buyer.Ban();
+                return AccusationResult.Success;
+            }
+            else
+            {
+                player.TakeDamage(1);
+                return AccusationResult.Success;
+            }
         }
 
-        return false;
+        return AccusationResult.OutOfRange;
     }
+}
+
+public enum AccusationResult
+{
+    Success,
+    OutOfRange
 }

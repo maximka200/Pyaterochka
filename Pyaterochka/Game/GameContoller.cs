@@ -32,21 +32,9 @@ public class GameController
         {
             foreach (var buyer in model.Buyers)
             {
-                if (Vector2.Distance(model.Player.Position, buyer.Position) < distanseToArrest)
+                if (AccusationSystem.Accuse(model.Player, buyer) == AccusationResult.Success)
                 {
-                    if (buyer is Buyer concreteBuyer)
-                    {
-                        if (concreteBuyer.IsThief())
-                        {
-                            
-                            buyer.Ban();
-                        }
-                        else
-                        {
-                            model.Player.TakeDamage(1);
-                        }
-                        break; 
-                    }
+                    break;
                 }
             }
         }

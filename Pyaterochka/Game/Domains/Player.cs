@@ -23,7 +23,7 @@ public class Player : IPlayer
     public void Update(GameMap gameMap)
     {
         var keyboardState = Keyboard.GetState();
-        Vector2 newPosition = PlayerMove(keyboardState);
+        var newPosition = PlayerMove(keyboardState);
         var newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y, HitBox, HitBox);
         var collides = false;
         foreach (var wall in gameMap.Walls)
@@ -41,7 +41,7 @@ public class Player : IPlayer
 
     private Vector2 PlayerMove(KeyboardState keyboardState)
     {
-        Vector2 newPosition = Position;
+        var newPosition = Position;
         if (keyboardState.IsKeyDown(Keys.W))
             if (keyboardState.IsKeyDown(Keys.LeftShift) && Stamina > StaminaTick)
             {

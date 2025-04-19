@@ -12,7 +12,7 @@ public class BuyerSpawner
     private readonly IPlayer player;
     private readonly Random random = new();
     private int spawnTimer = 0;
-    private const int spawnInterval = 60 * 12;
+    private const int spawnInterval = 60 * 20;
 
     public BuyerSpawner(List<IBuyer> buyers, Rectangle door, IPlayer player)
     {

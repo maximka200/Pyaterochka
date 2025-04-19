@@ -26,7 +26,7 @@ public class GameModel
         Map = new GameMap(); 
         
         var random = new Random();
-        Buyers.Add(new Boozer(new Vector2(320, 200), Player));
+        Buyers.Add(new Babushka(new Vector2(320, 200), Player));
         
         spawner = new BuyerSpawner(Buyers, Map.Door, Player);
     }
