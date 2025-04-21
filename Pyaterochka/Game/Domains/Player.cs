@@ -8,10 +8,10 @@ public class Player : IPlayer
     public int Health { get; private set; } = 3;
     public int Stamina { get; private set; } = StaminaMax;
     public Vector2 Position { get; private set; }
-    private static int StaminaTick = 7;
-    private static int StaminaMax = StaminaTick * 30;
-    private static float speedWalk => 2f;
-    private static float speedRun => 6f;
+    public static int StaminaTick = 7;
+    public static int StaminaMax = StaminaTick * 30;
+    public static float SpeedWalk => 2f;
+    public static float SpeedRun => 6f;
     public int HitBox => 40;
     public int Score {get; set;}
 
@@ -39,41 +39,41 @@ public class Player : IPlayer
             Position = newPosition;
     }
 
-    private Vector2 PlayerMove(KeyboardState keyboardState)
+    public Vector2 PlayerMove(KeyboardState keyboardState)
     {
         var newPosition = Position;
         if (keyboardState.IsKeyDown(Keys.W))
             if (keyboardState.IsKeyDown(Keys.LeftShift) && Stamina > StaminaTick)
             {
-                newPosition.Y -= speedRun;
+                newPosition.Y -= SpeedRun;
                 Stamina -= StaminaTick;
             }
             else
-                newPosition.Y -= speedWalk;
+                newPosition.Y -= SpeedWalk;
         if (keyboardState.IsKeyDown(Keys.S))
             if (keyboardState.IsKeyDown(Keys.LeftShift) && Stamina > StaminaTick)
             {
-                newPosition.Y += speedRun;
+                newPosition.Y += SpeedRun;
                 Stamina -= StaminaTick;
             }
             else
-                newPosition.Y += speedWalk;
+                newPosition.Y += SpeedWalk;
         if (keyboardState.IsKeyDown(Keys.A))
             if (keyboardState.IsKeyDown(Keys.LeftShift) && Stamina > StaminaTick)
             {
-                newPosition.X -= speedRun;
+                newPosition.X -= SpeedRun;
                 Stamina -= StaminaTick;
             }
             else
-                newPosition.X -= speedWalk;
+                newPosition.X -= SpeedWalk;
         if (keyboardState.IsKeyDown(Keys.D))
             if (keyboardState.IsKeyDown(Keys.LeftShift) && Stamina > StaminaTick)
             {
-                newPosition.X += speedRun;
+                newPosition.X += SpeedRun;
                 Stamina -= StaminaTick;
             }
             else
-                newPosition.X += speedWalk;
+                newPosition.X += SpeedWalk;
         if (Stamina < StaminaMax - 1)
             Stamina += 1;
         

@@ -12,7 +12,6 @@ namespace Pyaterochka
         private Texture2D floorTexture;
         private Texture2D wallTexture;
         private Texture2D doorTexture;
-        private Texture2D buyerTexture;
         private Texture2D gameOverTexture;
         private Texture2D boozerTexture;
         private Texture2D babushkaTexture;
@@ -28,7 +27,6 @@ namespace Pyaterochka
             floorTexture = content.Load<Texture2D>("map");
             wallTexture = content.Load<Texture2D>("wall");
             doorTexture = content.Load<Texture2D>("door");
-            buyerTexture = content.Load<Texture2D>("buyer");
             gameOverTexture = content.Load<Texture2D>("over");
             babushkaTexture= content.Load<Texture2D>("babushka");
             boozerTexture = content.Load<Texture2D>("boozer");

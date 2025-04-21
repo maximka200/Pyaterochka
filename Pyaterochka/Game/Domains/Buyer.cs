@@ -24,8 +24,8 @@ public class Buyer : IBuyer
 
     private bool isEscaping = false;
     private bool hasLeftShop = false;
-    private const int minEscapeTime = 5 * 60;
-    private const int maxEscapeTime = 15 * 60;
+    private const int minEscapeTime = 10 * 60;
+    private const int maxEscapeTime = 20 * 60;
     
     private Vector2 currentTarget;
     private List<Point> pathToDoor = new();
