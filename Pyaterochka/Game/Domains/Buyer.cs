@@ -95,7 +95,7 @@ public class Buyer : IBuyer
         if (currentPath.Count == 0)
         {
             var path = FindPathToDoor(map);
-            if (path.Count == 0)
+            if (path.Count <= 1)
             {
                 LeaveFromShop();
                 return;
@@ -107,7 +107,7 @@ public class Buyer : IBuyer
 
         if (IsAtPosition(currentTarget))
         {
-            if (currentPath.Count > 0)
+            if (currentPath.Count > 1)
             {
                 currentTarget = PathPointToVector(currentPath[0]);
                 currentPath.RemoveAt(0);
@@ -135,6 +135,8 @@ public class Buyer : IBuyer
         if (!TryMove(direction * speed, map))
         {
             currentPath.Clear();
+            if (escape)
+                leaveTimer = random.Next(minLeaveTime, maxLeaveTime);
         }
     }
 

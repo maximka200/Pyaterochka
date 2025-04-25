@@ -12,14 +12,14 @@
     </PropertyGroup>
     <ItemGroup>
         <None Remove="Icon.ico"/>
-        <None Remove="Icon.bmp"/>
+        <None Update="Icon.bmp">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.ico">
             <LogicalName>Icon.ico</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="Icon.bmp">
-            <LogicalName>Icon.bmp</LogicalName>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>

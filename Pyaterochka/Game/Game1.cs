@@ -9,48 +9,74 @@ namespace Pyaterochka
         protected GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private GameController controller;
+        private MainMenu mainMenu;
+        private bool isInMenu = true;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            // graphics.IsFullScreen = true;
-            var mapWidth = GameMap.Map.GetLength(1); // Количество клеток по ширине
-            var mapHeight = GameMap.Map.GetLength(0); // Количество клеток по высоте
-            var tileSize = 40; // Размер одной клетки в пикселях
+            
+            var mapWidth = GameMap.Map.GetLength(1);
+            var mapHeight = GameMap.Map.GetLength(0);
+            var tileSize = 40;
 
-            graphics.PreferredBackBufferWidth = mapWidth * tileSize; // Ширина экрана
+            graphics.PreferredBackBufferWidth = mapWidth * tileSize;
             graphics.PreferredBackBufferHeight = mapHeight * tileSize;
+            graphics.ApplyChanges();
         }
 
         protected override void Initialize()
         {
-            controller = new GameController(graphics);
+            mainMenu = new MainMenu();
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            controller.LoadContent(Content);
+            mainMenu.LoadContent(Content, GraphicsDevice.Viewport);
         }
 
         protected override void Update(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
-            controller.Update(gameTime);
+
+            if (isInMenu)
+            {
+                mainMenu.Update(gameTime);
+                if (mainMenu.IsPlayClicked)
+                {
+                    isInMenu = false;
+                    controller = new GameController(graphics);
+                    controller.LoadContent(Content);
+                }
+            }
+            else
+            {
+                controller.Update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-            controller.Draw(spriteBatch);
-            spriteBatch.End();
+            GraphicsDevice.Clear(Color.Black);
+            
+            if (isInMenu)
+            {
+                mainMenu.Draw(spriteBatch);
+            }
+            else
+            {
+                spriteBatch.Begin();
+                controller.Draw(spriteBatch);
+                spriteBatch.End();
+            }
+
             base.Draw(gameTime);
         }
     }

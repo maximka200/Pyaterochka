@@ -24,7 +24,7 @@ public class Player : IPlayer
     {
         var keyboardState = Keyboard.GetState();
         var newPosition = PlayerMove(keyboardState);
-        var newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y, HitBox, HitBox);
+        var newBounds = new Rectangle((int)newPosition.X - HitBox/2, (int)newPosition.Y - HitBox/2, HitBox, HitBox);
         var collides = false;
         foreach (var wall in gameMap.Walls)
         {
