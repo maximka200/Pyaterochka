@@ -11,10 +11,10 @@ public class GameController
     private KeyboardState previousKeyboardState;
     private float distanseToArrest = 100f;
 
-    public GameController()
+    public GameController(GraphicsDeviceManager graphics)
     {
         model = new GameModel();
-        view = new GameView(model);
+        view = new GameView(model, graphics);
     }
 
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)

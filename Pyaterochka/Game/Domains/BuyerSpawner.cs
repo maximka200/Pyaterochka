@@ -35,14 +35,18 @@ public class BuyerSpawner
     {
         var spawnPos = new Vector2(door.X, door.Y + 40);
         IBuyer buyer;
-    
-        if (random.Next(2) == 0)
+        var rand = random.Next(3);
+        if (rand == 0)
         {
             buyer = new Boozer(spawnPos, player);
         }
-        else
+        else if (rand == 1)
         {
             buyer = new Babushka(spawnPos, player);
+        }
+        else
+        {
+            buyer = new Usual(spawnPos, player);
         }
     
         buyers.Add(buyer);
