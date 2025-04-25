@@ -5,9 +5,8 @@ using Pyaterochka.Buyers;
 
 namespace Pyaterochka
 {
-    public class GameView
+    public class GameView(GameModel model)
     {
-        private GameModel model;
         private Texture2D playerTexture;
         private Texture2D floorTexture;
         private Texture2D wallTexture;
@@ -15,11 +14,7 @@ namespace Pyaterochka
         private Texture2D gameOverTexture;
         private Texture2D boozerTexture;
         private Texture2D babushkaTexture;
-
-        public GameView(GameModel model)
-        {
-            this.model = model;
-        }
+        private Texture2D usualTexture;
 
         public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
@@ -30,15 +25,16 @@ namespace Pyaterochka
             gameOverTexture = content.Load<Texture2D>("over");
             babushkaTexture= content.Load<Texture2D>("babushka");
             boozerTexture = content.Load<Texture2D>("boozer");
+            usualTexture = content.Load<Texture2D>("usual");
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             var tileSize = model.TileSize;
             
-            for (int y = 0; y < GameMap.Map.GetLength(0); y++)
+            for (var y = 0; y < GameMap.Map.GetLength(0); y++)
             {
-                for (int x = 0; x < GameMap.Map.GetLength(1); x++)
+                for (var x = 0; x < GameMap.Map.GetLength(1); x++)
                 {
                     var pos = new Rectangle(
                         x * tileSize - tileSize / 2,  // Смещение по X
@@ -78,13 +74,20 @@ namespace Pyaterochka
                     {
                         case Boozer:
                             spriteBatch.Draw(boozerTexture, new Rectangle(
-                                (int)buyer.Position.X - buyer.HitBox / 2, 
-                                (int)buyer.Position.Y - buyer.HitBox / 2, 
+                                (int)buyer.Position.X, 
+                                (int)buyer.Position.Y, 
                                 buyer.HitBox, buyer.HitBox), 
                                 Color.White);
                             break;
                         case Babushka:
-                            spriteBatch.Draw(babushkaTexture, new Rectangle((int)buyer.Position.X, (int)buyer.Position.Y, buyer.HitBox, buyer.HitBox), Color.White);
+                            spriteBatch.Draw(babushkaTexture, new Rectangle(
+                                (int)buyer.Position.X, (int)buyer.Position.Y, 
+                                buyer.HitBox, buyer.HitBox), Color.White);
+                            break;
+                        case Usual:
+                            spriteBatch.Draw(babushkaTexture, new Rectangle(
+                                (int)buyer.Position.X, (int)buyer.Position.Y, 
+                                buyer.HitBox, buyer.HitBox), Color.White);
                             break;
                     }
                     
