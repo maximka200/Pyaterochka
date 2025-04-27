@@ -36,7 +36,6 @@ public class Buyer : IBuyer
         Position = startPosition;
         SnapToGrid();
         
-        // Для вора устанавливаем специальное время
         leaveTimer = isThief 
             ? thiefLeaveTime 
             : random.Next(minLeaveTime, maxLeaveTime);
@@ -75,8 +74,7 @@ public class Buyer : IBuyer
 
             currentPath = BFS.FindPath(map, start, target);
             if (currentPath.Count == 0) return;
-
-            // Пропускаем стартовую точку, если она есть в пути
+            
             if (currentPath.Count > 0 && currentPath[0] == start)
             {
                 currentPath.RemoveAt(0);
@@ -131,13 +129,11 @@ public class Buyer : IBuyer
         }
         
         var speed = escape ? walkSpeed : escapeSpeed;
-        
-        if (!TryMove(direction * speed, map))
-        {
-            currentPath.Clear();
-            if (escape)
-                leaveTimer = random.Next(minLeaveTime, maxLeaveTime);
-        }
+
+        if (TryMove(direction * speed, map)) return;
+        currentPath.Clear();
+        if (escape)
+            leaveTimer = random.Next(minLeaveTime, maxLeaveTime);
     }
 
     private bool IsAtPosition(Vector2 target)

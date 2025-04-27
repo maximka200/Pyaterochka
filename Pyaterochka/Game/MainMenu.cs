@@ -20,7 +20,7 @@ namespace Pyaterochka
             
             var buttonWidth = 200;
             var buttonHeight = 50;
-            Rectangle buttonRect = new Rectangle(
+            var buttonRect = new Rectangle(
                 (viewport.Width / 2) - (buttonWidth / 2),
                 (viewport.Height / 2) - (buttonHeight / 2),
                 buttonWidth,
@@ -51,9 +51,9 @@ namespace Pyaterochka
 
     public class Button
     {
-        public Rectangle Bounds;
-        public string Text;
-        public Color Color;
+        private Rectangle Bounds;
+        private string Text;
+        private Color Color;
         public bool IsClicked;
         private bool wasPressed;
 

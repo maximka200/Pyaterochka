@@ -13,12 +13,14 @@ public static class AccusationSystem
         {
             if (buyer.IsThief())
             {
+                SoundManager.PlaySoundEffect("successful-accusation");
                 player.Score++;
                 buyer.Ban();
                 return AccusationResult.Success;
             }
             else
             {
+                SoundManager.PlaySoundEffect("unsuccessful-accusation");
                 player.TakeDamage(1);
                 return AccusationResult.Success;
             }

@@ -15,6 +15,18 @@
         <None Update="Icon.bmp">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Content\successful-accusation.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\thief-leave.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\unsuccessful-accusation.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Content\background-song.mp3">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.ico">

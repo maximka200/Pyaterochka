@@ -35,25 +35,25 @@ public class GameModel
         {
             buyer.Update(Map);
 
-            if (buyer.IsBanned)
-                Buyers.Remove(buyer);
+            if (!buyer.IsBanned) continue;
+            if (buyer.IsThief())
+                SoundManager.PlaySoundEffect("thief-leave");
+            Buyers.Remove(buyer);
         }
 
         spawner.Update();
 
-        if (IsGameOver)
+        if (!IsGameOver) return;
+        SoundManager.StopSong();
+        gameOverTimer += gameTime.ElapsedGameTime.TotalSeconds;
+        if (!isGameOverHandled)
         {
-            gameOverTimer += gameTime.ElapsedGameTime.TotalSeconds;
-            if (!isGameOverHandled)
-            {
-                isGameOverHandled = true;
-                gameOverTimer = 0;
-            }
-            else if (gameOverTimer > 3)
-            {
-                Environment.Exit(0);
-            }
+            isGameOverHandled = true;
+            gameOverTimer = 0;
+        }
+        else if (gameOverTimer > 3)
+        {
+            Environment.Exit(0);
         }
     }
-    
 }

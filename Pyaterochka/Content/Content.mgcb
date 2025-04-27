@@ -49,6 +49,12 @@
 /processorParam:TextureFormat=Color
 /build:babushka.png
 
+#begin background-song.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:background-song.mp3
+
 #begin buyer.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -115,6 +121,24 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:player.png
+
+#begin successful-accusation.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:successful-accusation.wav
+
+#begin thief-leave.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:thief-leave.wav
+
+#begin unsuccessful-accusation.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:unsuccessful-accusation.wav
 
 #begin usual.png
 /importer:TextureImporter
