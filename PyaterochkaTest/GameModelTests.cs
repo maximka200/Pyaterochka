@@ -1,40 +1,51 @@
-﻿using Microsoft.Xna.Framework;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Pyaterochka;
-using Pyaterochka.Buyers;
 
-namespace PyaterochkaTests
+[TestFixture]
+public class GameModelTests
 {
-    [TestFixture]
-    public class GameModelTests
+    [Test]
+    public void GameModel_InitializesCorrectly()
     {
-        private GameModel _gameModel;
+        var model = new GameModel();
 
-        [SetUp]
-        public void Setup()
-        {
-            _gameModel = new GameModel();
-        }
+        Assert.IsNotNull(model.Player);
+        Assert.IsNotNull(model.Map);
+        Assert.IsFalse(model.IsGameOver);
+    }
 
-        // Проверка завершения игры при нулевом здоровье
-        [Test]
-        public void Update_WhenPlayerHealthIsZero_SetsGameOver()
-        {
-            _gameModel.Player.TakeDamage(3);
-            _gameModel.Update(new GameTime());
-            Assert.IsTrue(_gameModel.IsGameOver);
-        }
+    [Test]
+    public void GameModel_GameOver_WhenHealthIsZero()
+    {
+        var model = new GameModel();
+        model.Player.Health = 0;
 
-        // Проверка удаления забаненных покупателей
-        [Test]
-        public void Update_WhenBuyerIsBanned_RemovesFromList()
-        {
-            var buyer = new Babushka(Vector2.Zero, _gameModel.Player);
-            buyer.Ban();
-            _gameModel.Buyers.Add(buyer);
-            
-            _gameModel.Update(new GameTime());
-            Assert.IsFalse(_gameModel.Buyers.Contains(buyer));
-        }
+        Assert.IsTrue(model.IsGameOver);
+    }
+
+    [Test]
+    public void GameModel_RemovesBannedBuyers()
+    {
+        var model = new GameModel();
+        var testBuyer = new TestBuyer { Banned = true };
+        model.Buyers.Add(testBuyer);
+
+        model.Update(new GameTime());
+
+        Assert.IsFalse(model.Buyers.Contains(testBuyer));
+    }
+
+    private class TestBuyer : IBuyer
+    {
+        public Vector2 Position { get; set; } = Vector2.Zero;
+        public int HitBox => 20;
+        public bool IsBanned => Banned;
+        public bool Banned { get; set; } = false;
+
+        public void Update(GameMap map) {}
+        public bool IsThief() => true;
+        public void Ban() {}
     }
 }

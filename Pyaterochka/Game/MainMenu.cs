@@ -10,12 +10,16 @@ namespace Pyaterochka
         private SpriteFont font;
         private Button playButton;
         private Viewport viewport;
+        private int highScore;
+        private Texture2D titleTexture;
 
         public bool IsPlayClicked { get; private set; }
 
         public void LoadContent(ContentManager content, Viewport viewport)
         {
             font = content.Load<SpriteFont>("font");
+            titleTexture = content.Load<Texture2D>("title");
+            highScore = ScoreManager.LoadHighScore();
             this.viewport = viewport;
             
             var buttonWidth = 200;
@@ -44,9 +48,36 @@ namespace Pyaterochka
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
+
+            if (titleTexture != null)
+            {
+                var scale = 2; 
+                var newWidth = titleTexture.Width / scale;
+                var newHeight = titleTexture.Height / scale;
+
+                var titleRect = new Rectangle(
+                    (viewport.Width - newWidth) / 2,
+                    (viewport.Height / 2) - 250, 
+                    newWidth,
+                    newHeight
+                );
+
+                spriteBatch.Draw(titleTexture, titleRect, Color.White);
+            }
+
             playButton.Draw(spriteBatch, font);
+
+            var text = $"Рекорд: {highScore}";
+            var textSize = font.MeasureString(text);
+            var position = new Vector2(
+                (viewport.Width - textSize.X) / 2,
+                (viewport.Height / 2) + 50
+            );
+            spriteBatch.DrawString(font, text, position, Color.White);
+
             spriteBatch.End();
         }
+
     }
 
     public class Button

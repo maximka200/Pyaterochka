@@ -50,7 +50,13 @@ public class GameModel
         {
             isGameOverHandled = true;
             gameOverTimer = 0;
+
+            var currentScore = Player.Score;
+            var bestScore = ScoreManager.LoadHighScore();
+            if (currentScore > bestScore)
+                ScoreManager.SaveHighScore(currentScore);
         }
+
         else if (gameOverTimer > 3)
         {
             Environment.Exit(0);

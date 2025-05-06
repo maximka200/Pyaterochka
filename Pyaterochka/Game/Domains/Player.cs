@@ -5,7 +5,7 @@ namespace Pyaterochka;
 
 public class Player : IPlayer
 {
-    public int Health { get; private set; } = 3;
+    public int Health { get; set; } = 3;
     public int Stamina { get; private set; } = StaminaMax;
     public Vector2 Position { get; private set; }
     public static int StaminaTick = 7;

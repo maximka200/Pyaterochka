@@ -17,6 +17,7 @@ namespace Pyaterochka
         private Texture2D usualTexture;
 
         private SpriteFont font;
+        private int highScore;
 
         public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
         {
@@ -34,6 +35,7 @@ namespace Pyaterochka
             SoundManager.LoadSoundEffect(content, "thief-leave");
             SoundManager.LoadSong(content, "background-song");
             SoundManager.PlaySong("background-song");
+            highScore = ScoreManager.LoadHighScore();
         }
 
         public void Draw(SpriteBatch spriteBatch)
